@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+import time
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -10,7 +10,6 @@ from oauth.outlookservice import *
 def home(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth:gettoken"))
     sign_in_url = get_signin_url(redirect_uri)
-    print redirect_uri
     return HttpResponse('<a href="' + sign_in_url +'">Click here to sign in and view your mail</a>')
 
 def gettoken(request):
@@ -19,7 +18,25 @@ def gettoken(request):
     token = get_token_from_code(auth_code, redirect_uri)
     access_token = token["access_token"]
     user = get_me(access_token)
+    refresh_token = token["refresh_token"]
+
+    #expires_in is in seconds
+    expires_in = token["expires_in"]
+
+    expiration = int(time.time()) + expires_in - 120
 
     #saving the session
     request.session['access_token'] = access_token
-    return HttpResponse("User Name : {0}  Access Token : {1}".format(user["displayName"], access_token))
+    request.session['refresh_token'] = refresh_token
+    request.session['token_expires'] = expiration
+    return HttpResponseRedirect(reverse('oauth:mail'))
+
+def mail(request):
+  access_token = get_access_token(request, request.build_absolute_uri(reverse('oauth:gettoken')))
+  # If there is no token in the session, redirect to home
+  if not access_token:
+    return HttpResponseRedirect(reverse('oauth:home'))
+  else:
+      message = get_my_messages(access_token)
+      #a basic json response will be printed on screen
+      return HttpResponse('The latest email recieved : {0}'.format(message))

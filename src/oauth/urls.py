@@ -9,5 +9,7 @@ urlpatterns = [
     # explicit "/oauth/home"
     url(r'^home/$', views.home, name = "home"),
     # 'oauth/gettoken'
-    url(r'^gettoken/$', views.gettoken, name = "gettoken")
+    url(r'^gettoken/$', views.gettoken, name = "gettoken"),
+    # 'oauth/mail'
+    url(r'^mail/$', views.mail, name = "mail")
 ]
