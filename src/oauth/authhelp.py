@@ -5,9 +5,10 @@ import requests
 import base64
 import json
 import time
+import os
 
-client_id = '9c474603-bb4b-4a2b-95f2-0764dabb66d6'
-client_secret = 'jcexXPFSL543%!]kvoNE52|'
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
 
 # Constant strings for OAuth2 flow
 # The OAuth authority
