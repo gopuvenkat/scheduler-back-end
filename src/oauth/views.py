@@ -4,13 +4,24 @@ import time
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+
 from oauth.authhelp import *
 from oauth.outlookservice import *
+from oauth.serializers import homeSerializer
+from rest_framework import views, generics
+from rest_framework.response import Response
 
-def home(request):
+
+def signin(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth:gettoken"))
     sign_in_url = get_signin_url(redirect_uri)
-    return HttpResponse('<a href="' + sign_in_url +'">Click here to sign in and view your mail</a>')
+    return sign_in_url
+
+class home(views.APIView):
+    def get(self, request):
+        data = {'sign_in_url' : signin(request)}
+        results = homeSerializer(data).data
+        return Response(results)
 
 def gettoken(request):
     auth_code = request.GET["code"]
