@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import time
+import datetime
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from oauth.authhelp import *
 from oauth.outlookservice import *
-from oauth.serializers import homeSerializer
+from models import Emails, Users
+from oauth.serializers import homeSerializer, UserSerializer
 from rest_framework import views, generics
 from rest_framework.response import Response
 
@@ -49,5 +51,26 @@ def mail(request):
     return HttpResponseRedirect(reverse('oauth:home'))
   else:
       message = get_my_messages(access_token)
-      #a basic json response will be printed on screen
-      return HttpResponse('The latest email recieved : {0}'.format(message))
+      time_now = datetime.datetime.utcnow()
+      # for i in range(2):
+          #rt = received time
+          # todo = Emails()
+          # todo.username = Users.objects.get(email="Find@name.com")
+          # rt = message['value'][i]['receivedDateTime']
+          # rt_dt = datetime.datetime(int(rt[0:4]), int(rt[5:7]), int(rt[8:10]), int(rt[11:13]), int(rt[14:16]), int(rt[17:19]))
+          # todo.receivedDateTime = rt_dt
+          # todo.title = message['value'][i]['body']['content']
+          # todo.date = rt_dt.date()
+          # todo.start_time = rt_dt.time()
+          # todo.end_time = rt_dt.time()
+          # todo.save()
+          # change this
+      return "Find@name.com"
+class mailView(views.APIView):
+     def get(self, request):
+         user = mail(request)
+         queryset = Emails.objects.filter(username__email = user)
+         id = Users.objects.get(email=user).pk
+         data = {'id' : id, 'email' : user, 'mails' : Emails.objects.filter(username__email = user)}
+         results = UserSerializer(data).data
+         return Response(results)

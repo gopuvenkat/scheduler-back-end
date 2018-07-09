@@ -11,5 +11,5 @@ urlpatterns = [
     # 'oauth/gettoken'
     url(r'^gettoken/$', views.gettoken, name = "gettoken"),
     # 'oauth/mail'
-    url(r'^mail/$', views.mail, name = "mail")
+    url(r'^mail/$', views.mailView.as_view(), name = "mail")
 ]

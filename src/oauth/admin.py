@@ -2,5 +2,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from oauth.models import Users, Emails
 
-# Register your models here.
+admin.site.register(Users)
+admin.site.register(Emails)
