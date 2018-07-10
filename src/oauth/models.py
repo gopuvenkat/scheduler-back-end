@@ -9,7 +9,7 @@ class Users(models.Model):
         verbose_name_plural = "Users"
 
     email = models.EmailField(unique=True)
-    lastchecked = models.DateTimeField(default=datetime.datetime(2000, 1, 1, 0,0,0, 0))
+    lastchecked = models.DateTimeField(default=datetime.datetime(2000, 1, 1, 0,0,0, 0, pytz.UTC))
 
     def __unicode__(self):
         return self.email
