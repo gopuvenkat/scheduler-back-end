@@ -56,7 +56,7 @@ def get_my_messages(access_token):
   #  Only first 10 results returned
   #  Only return the ReceivedDateTime, Subject, From, body fields
   #  Sort the results by the ReceivedDateTime field in descending order
-  query_parameters = {'$top': '2',
+  query_parameters = {'$top': '10',
                       '$select': 'receivedDateTime,subject,from,body',
                       #uncomment the line below to sort the recieved mails
                       #'$orderby': 'receivedDateTime DESC'
