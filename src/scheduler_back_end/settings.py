@@ -26,10 +26,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'rest_framework',
+    'rest_framework.authtoken',
     'oauth',
 ]
+
+#the custom user model that is being used for token generation
+#otherwise it is the default User model in django.contrib.auth.models, which has now been changed
+AUTH_USER_MODEL = 'oauth.Users'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,6 +66,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'scheduler_back_end.wsgi.application'
+
+# the next few lines (REST_FRAMEWORK dictionary) if unquoted will apply token authentication on all
+# views of the web app
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     )
+# }
+
 
 
 # Database

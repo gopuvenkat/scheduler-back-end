@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
-import pytz
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class Users(models.Model):
+class Users(AbstractUser):
     class Meta:
         verbose_name_plural = "Users"
 
     email = models.EmailField(unique=True)
-    lastchecked = models.DateTimeField(default=datetime.datetime(2000, 1, 1, 0,0,0, 0, pytz.UTC))
-
+    lastchecked = models.DateTimeField(default=datetime.datetime(2000, 1, 1, 0,0,0, 0))
+    password = models.CharField(default="not_required", max_length=15)
+    username = models.CharField(max_length=100, unique=True)
     def __unicode__(self):
         return self.email
 

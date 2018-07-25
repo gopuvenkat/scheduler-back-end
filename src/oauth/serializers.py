@@ -4,6 +4,9 @@ from models import Users, Emails
 class homeSerializer(serializers.Serializer):
     sign_in_url = serializers.URLField()
 
+class tokenSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
 class mailSerializer(serializers.ModelSerializer):
         class Meta:
             model = Emails

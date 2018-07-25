@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from oauth import views
 
+
 app_name = "oauth"
 
 urlpatterns = [
@@ -11,5 +12,7 @@ urlpatterns = [
     # 'oauth/gettoken'
     url(r'^gettoken/$', views.gettoken, name = "gettoken"),
     # 'oauth/mail'
-    url(r'^mail/$', views.mailView.as_view(), name = "mail")
+    url(r'^mail/$', views.mailView.as_view(), name = "mail"),
+    # 'oauth/token'
+    url(r'^token/$', views.tokenView.as_view(), name = 'token'),
 ]
