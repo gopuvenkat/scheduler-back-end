@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from oauth import views
-
+from rest_framework.authtoken import views as rest_framework_views
 
 app_name = "oauth"
 
@@ -15,4 +15,8 @@ urlpatterns = [
     url(r'^mail/$', views.mailView.as_view(), name = "mail"),
     # 'oauth/token'
     url(r'^token/$', views.tokenView.as_view(), name = 'token'),
+    #'oauth/login'
+    url(r'login/$', views.get_auth_token, name = "login"),
+    # 'oauth/get_auth_token'
+    url(r'^get_auth_token/$', rest_framework_views.obtain_auth_token, name='get_auth_token'),
 ]

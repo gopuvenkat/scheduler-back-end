@@ -15,6 +15,7 @@ from oauth.serializers import homeSerializer, UserSerializer, tokenSerializer
 from rest_framework import views
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 def signin(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth:gettoken"))
@@ -54,7 +55,7 @@ def gettoken(request):
         npuser.save()
     except:
         pass
-    return HttpResponseRedirect(reverse('oauth:token'))
+    return HttpResponseRedirect(reverse('oauth:mail'))
 
 def mail(request):
     access_token = get_access_token(request, request.build_absolute_uri(reverse('oauth:gettoken')))
@@ -107,3 +108,17 @@ class mailView(views.APIView):
          data = {'id' : id, 'email' : user, 'mails' : Emails.objects.filter(username__email = user)}
          results = UserSerializer(data).data
          return Response(results)
+
+
+
+def get_auth_token(request):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        # the password verified for the user
+        if user.is_active:
+            token, created = Token.objects.get_or_create(user=user)
+            #request.session['auth'] = token.key
+            return redirect('/polls/', request)
+    return redirect(settings.LOGIN_URL, request)
