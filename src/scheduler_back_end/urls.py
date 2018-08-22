@@ -20,5 +20,5 @@ from oauth import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^oauth/', include('oauth.urls', namespace = "oauth")),
-    url(r'^$', views.home, name = "home"),
+    url(r'^$', views.home.as_view(), name = "home"),
 ]

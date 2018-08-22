@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import os
 import sys
-
+import dotenv
 if __name__ == "__main__":
+    #read the dotenv file everytime a change is made and manage.py is executed
+    dotenv.read_dotenv() 
+    
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "scheduler_back_end.settings")
     try:
         from django.core.management import execute_from_command_line
