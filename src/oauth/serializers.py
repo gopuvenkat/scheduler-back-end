@@ -5,7 +5,9 @@ class homeSerializer(serializers.Serializer):
     sign_in_url = serializers.URLField()
 
 class tokenSerializer(serializers.Serializer):
-    token = serializers.CharField()
+    access_token = serializers.CharField()
+    username = serializers.CharField()
+
 
 class mailSerializer(serializers.ModelSerializer):
         class Meta:
@@ -28,3 +30,4 @@ class UserSerializer(serializers.ModelSerializer):
         'email',
         'mails',
         )
+

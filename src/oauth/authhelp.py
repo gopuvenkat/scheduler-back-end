@@ -47,7 +47,6 @@ def get_token_from_code(auth_code, redirect_uri):
               }
   #using the constant url "token url" to post the required data along with the auth_code
   r = requests.post(token_url, data = post_data)
-
   try:
     return r.json()
   except:
@@ -65,7 +64,6 @@ def get_token_from_request_token(request_token, redirect_uri):
     }
 
     requests.post(token_url, data = post_data)
-
     try:
         return r.json()
     except:
@@ -83,6 +81,8 @@ def get_access_token(request, redirect_uri):
         expiration = int(time.time()) + expires_in - 120
 
         #saving the session
+        
+        
         request.session['access_token'] = access_token
         request.session['refresh_token'] = refresh_token
         request.session['token_expires'] = expiration

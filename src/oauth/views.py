@@ -12,10 +12,8 @@ from oauth.authhelp import get_signin_url, get_token_from_code, get_access_token
 from oauth.outlookservice import get_me, get_my_messages
 from models import Emails, Users
 from oauth.serializers import homeSerializer, UserSerializer, tokenSerializer
-from rest_framework import views
+from rest_framework import views, status
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 def signin(request):
     redirect_uri = request.build_absolute_uri(reverse("oauth:gettoken"))
@@ -55,12 +53,20 @@ def gettoken(request):
         npuser.save()
     except:
         pass
-    return HttpResponseRedirect(reverse('oauth:mail'))
+    return HttpResponseRedirect(reverse('oauth:token'))
 
-def mail(request):
+def token(request):
     access_token = get_access_token(request, request.build_absolute_uri(reverse('oauth:gettoken')))
-    # If there is no token in the session, redirect to home
     global current_user
+    return (access_token, current_user)
+
+def mail(request, token_object):
+    #token_object = token(request)
+    access_token = token_object[0]
+    current_user = token_object[1]
+    print "access_token : " + str(access_token)
+    print "current_user : " + str(current_user)
+    # If there is no token in the session, redirect to home
     current_user_obj = Users.objects.get(email=current_user)
     if not access_token:
         return HttpResponseRedirect(reverse('oauth:home'))
@@ -68,7 +74,6 @@ def mail(request):
         message = get_my_messages(access_token)
         time_now = datetime.datetime.utcnow()
         for i in range(10):
-            #rt = received time
             todo = Emails()
             todo.username = current_user_obj
             rt = message['value'][i]['receivedDateTime']
@@ -84,41 +89,27 @@ def mail(request):
         current_user_obj.save()
         return current_user
 
-def token(request):
-    global current_user
-    current_user_object = Users.objects.get(email=current_user)
-    token = Token.objects.get_or_create(user=current_user_object)
-    return token[0]
-
 class tokenView(views.APIView):
     def get(self, request):
-        mail(request)
-        data = {'token' : token(request)}
+        data = {'access_token' : token(request)[0],
+                'username' : token(request)[1]
+        }
         results = tokenSerializer(data).data
         return Response(results)
 
 
-class mailView(views.APIView):
-    #authentication_classes = (TokenAuthentication,)
-    #permission_classes = (IsAuthenticated,)
-    def get(self, request):
-         user = mail(request)
-         queryset = Emails.objects.filter(username__email = user)
-         id = Users.objects.get(email=user).pk
-         data = {'id' : id, 'email' : user, 'mails' : Emails.objects.filter(username__email = user)}
-         results = UserSerializer(data).data
-         return Response(results)
+class mailView(views.APIView):    
+    def post(self, request):
+        serializer = tokenSerializer(data = request.data)
+        if serializer.is_valid():
+            token_object = (serializer["access_token"].value, serializer["username"].value)
+            user = mail(request, token_object)
+            queryset = Emails.objects.filter(username__email = user)
+            id = Users.objects.get(email=user).pk
+            data = {'id' : id, 'email' : user, 'mails' : queryset}
+            results = UserSerializer(data).data
+            return Response(results)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 
 
-def get_auth_token(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        # the password verified for the user
-        if user.is_active:
-            token, created = Token.objects.get_or_create(user=user)
-            #request.session['auth'] = token.key
-            return redirect('/polls/', request)
-    return redirect(settings.LOGIN_URL, request)

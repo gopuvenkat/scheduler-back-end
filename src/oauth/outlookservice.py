@@ -51,7 +51,7 @@ def get_me(access_token):
 
 def get_my_messages(access_token):
   get_messages_url = graph_endpoint.format('/me/mailfolders/inbox/messages')
-
+  
   # Use OData query parameters to control the results
   #  Only first 10 results returned
   #  Only return the ReceivedDateTime, Subject, From, body fields
