@@ -9,7 +9,7 @@ Install requirements
 pip install -r requirements.txt
 ```
 ## Run
-Intialize the localhost server by running the following command
+Intialize the localhost server by running the following command from the `src` directory.
 ```
 python manage.py runserver
 ```
